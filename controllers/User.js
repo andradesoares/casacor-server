@@ -140,7 +140,7 @@ module.exports = {
         },
       });
 
-      if (admin.status !== 'pleno') {
+      if (admin.tipo !== 'pleno') {
         res.status(401).send({ error: 'Usuario sem autorização' });
       }
 
@@ -179,7 +179,7 @@ module.exports = {
 
       const link = `https://casacor-client.vercel.app/admin/recuperar-senha/nova/?tipo=${tipo}&resetToken=${resetToken}&userId=${userId}`;
 
-      sendEmail.sendEmail(email, 'Password Reset Request', link);
+      sendEmail.sendEmail(email, 'Cadastrar senha', link);
 
       res.status(200).json({ message: 'Usuario cadastrado.', userId });
     } catch (error) {

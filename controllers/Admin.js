@@ -31,7 +31,6 @@ module.exports = {
       });
       res.status(200).send({ admins });
     } catch (error) {
-      console.log(error);
       res.status(500).send({ error: 'Erro ao encontrar usuarios' });
     }
   },
@@ -45,13 +44,9 @@ module.exports = {
         },
       });
 
-      if (admin.status !== 'pleno') {
-        res.status(401).send({ error: 'Usuario sem autorização' });
-      }
-
       if (admin) await admin.destroy();
       res.status(200).send({ message: 'Admin excluido' });
-    } catch (error) {
+    } catch (erro) {
       res.status(500).send({ error: 'Erro ao excluir usuario' });
     }
   },
@@ -102,7 +97,7 @@ module.exports = {
         },
       });
 
-      if (admin.status !== 'pleno') {
+      if (admin.tipo !== 'pleno') {
         res.status(401).send({ error: 'Usuario sem autorização' });
       }
 
