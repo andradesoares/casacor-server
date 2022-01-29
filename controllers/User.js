@@ -122,7 +122,7 @@ module.exports = {
   },
   adminSignUp: async (req, res, next) => {
     try {
-      const { nome, tipo, email } = req.value.body;
+      const { nome, tipo, email, admin_userId } = req.value.body;
 
       const usuarioExistente = await Admin.findOne({
         where: {
@@ -134,11 +134,21 @@ module.exports = {
         return res.status(400).json({ message: 'Erro ao cadastrar usuario' });
       }
 
+      let admin = await Admin.findOne({
+        where: {
+          admin_userId: admin_userId,
+        },
+      });
+
+      if (admin.status !== 'pleno') {
+        res.status(401).send({ error: 'Usuario sem autorização' });
+      }
+
       const userId = crypto.randomBytes(32).toString('hex');
       const password = crypto.randomBytes(32).toString('hex');
       const hashPassword = bcrypt.hashSync(password, 10);
 
-      const admin = await Admin.create({
+      await Admin.create({
         admin_userId: userId,
         nome: nome,
         tipo: tipo,

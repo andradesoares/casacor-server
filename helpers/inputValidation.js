@@ -81,6 +81,7 @@ module.exports = {
       perfilInstagram: joi.string().required(),
     }),
     adminSchema: joi.object().keys({
+      admin_userId: joi.string().required(),
       nome: joi.string().required(),
       tipo: joi.string().required(),
       email: joi.string().email().required(),
