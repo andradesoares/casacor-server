@@ -60,6 +60,7 @@ module.exports = {
 
       res.status(200).send({ token, userId, usuario });
     } catch (error) {
+      console.log(error);
       res.status(400).send({ error: 'Erro ao logar usuario' });
     }
   },
