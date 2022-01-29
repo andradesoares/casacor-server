@@ -167,7 +167,7 @@ module.exports = {
         updatedAt: new Date(),
       });
 
-      const link = `http://localhost:3000/admin/recuperar-senha/nova/?tipo=${tipo}&resetToken=${resetToken}&userId=${userId}`;
+      const link = `https://casacor-client.vercel.app/admin/recuperar-senha/nova/?tipo=${tipo}&resetToken=${resetToken}&userId=${userId}`;
 
       sendEmail.sendEmail(email, 'Password Reset Request', link);
 
@@ -224,7 +224,7 @@ module.exports = {
         updatedAt: new Date(),
       });
 
-      const link = `http://localhost:3000/recuperar-senha/nova/?tipo=${tipo}&resetToken=${resetToken}&userId=${usuario.userId}`;
+      const link = `https://casacor-client.vercel.app/recuperar-senha/nova/?tipo=${tipo}&resetToken=${resetToken}&userId=${usuario.userId}`;
 
       sendEmail.sendEmail(email, 'Password Reset Request', link);
 
