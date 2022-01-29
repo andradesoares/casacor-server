@@ -265,11 +265,13 @@ module.exports = {
 
   fileUpload: async (req, res, next) => {
     try {
-      const [file] = req.files;
       const { userId, nome } = req.body;
 
       const id = await createAndUploadFile(auth, `public/images/fornecedores/${nome}`, nome);
-      console.log(id);
+
+      if (!id) {
+        res.status(500).json({ error: 'Erro enviando arquivo.' });
+      }
 
       await Fornecedor.update(
         { logo: id },
