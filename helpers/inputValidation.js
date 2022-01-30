@@ -48,7 +48,7 @@ module.exports = {
       telefone: joi.string().required(),
       siteEmpresa: joi.string().required(),
       perfilInstagram: joi.string().required(),
-      password: joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
+      password: joi.string().pattern(new RegExp('.{3,30}$')).required(),
       email: joi.string().email().required(),
     }),
     fornecedorUpdateSchema: joi.object().keys({
