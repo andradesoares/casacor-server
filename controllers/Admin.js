@@ -73,6 +73,8 @@ module.exports = {
   respostaCadastro: async (req, res, next) => {
     const { admin_userId, tipoUsuario, status, userId } = req.body;
 
+    console.log(userId);
+
     try {
       let usuario;
       if (tipoUsuario == 'fornecedor') {
@@ -90,6 +92,8 @@ module.exports = {
           },
         });
       }
+
+      console.log(tipoUsuario);
 
       let admin = await Admin.findOne({
         where: {
@@ -118,7 +122,8 @@ module.exports = {
       }
 
       res.status(200).send({ message: 'Status Atualizado', usuario: usuario.dataValues });
-    } catch (erro) {
+    } catch (error) {
+      console.log(error);
       res.status(500).send({ erro: 'Erro ao encontrar usuarios' });
     }
   },

@@ -97,6 +97,7 @@ module.exports = {
         },
         attributes: ['fornecedor_userId', 'nome'],
         order: [['nome', 'ASC']],
+        where: { status: 'confirmado' },
       });
 
       const fornecedoresAdicionados = fornecedores.filter(

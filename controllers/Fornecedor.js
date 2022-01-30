@@ -80,7 +80,7 @@ module.exports = {
       // const response = await downloadFile(usuario.logo, auth);
       res.status(200).send({ usuario });
     } catch (error) {
-      res.status(500).send({ error: 'Erro ao encontrar usuarios' });
+      res.status(500).send({ error: 'Erro ao encontrar usuario' });
     }
   },
 
@@ -98,6 +98,7 @@ module.exports = {
         },
         attributes: ['profissional_userId', 'nome'],
         order: [['nome', 'ASC']],
+        where: { status: 'confirmado' },
       });
 
       const profissionaisAdicionados = profissionais.filter(
