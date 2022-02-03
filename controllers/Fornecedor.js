@@ -1,69 +1,9 @@
 const crypto = require('crypto');
 const { Op } = require('sequelize');
 const fs = require('fs');
-const { google } = require('googleapis');
+const googleDrive = require('../helpers/googleDrive');
 
 const { Fornecedor, Profissional, FornecedorProfissional } = require('../models');
-
-const KEYFILEPATH = __dirname + '/../google-credentials.json';
-const SCOPES = ['https://www.googleapis.com/auth/drive'];
-
-const auth = new google.auth.GoogleAuth({
-  keyFile: KEYFILEPATH,
-  scopes: SCOPES,
-});
-
-// const downloadFile = async (fileId, auth) => {
-//   const driveService = google.drive({ version: 'v3', auth });
-
-//   const file = fs.createWriteStream(__dirname + `/../images/logo.jpg`); // destination is path to a file
-
-//   await driveService.files.get(
-//     { fileId: fileId, alt: 'media' },
-//     { responseType: 'stream' },
-//     function (err, res) {
-//       res.data
-//         .on('end', () => {
-//           console.log('Done');
-//         })
-//         .on('error', (err) => {
-//           console.log('Error', err);
-//         })
-//         .pipe(file);
-//     }
-//   );
-// };
-
-const createAndUploadFile = async (auth, file, nome) => {
-  const driveService = google.drive({ version: 'v3', auth });
-  let fileMetaData = {
-    name: `${nome}.jpg`,
-    parents: ['1i54xyh3Q5oJMfyVqk1fURsR7cDc7PFtU'],
-  };
-  let media = {
-    mimeType: 'image/jpeg',
-    body: fs.createReadStream(file),
-  };
-
-  let response = await driveService.files.create({
-    resource: fileMetaData,
-    media: media,
-    fields: 'id',
-  });
-
-  switch (response.status) {
-    case 200:
-      return response.data.id;
-  }
-};
-
-const deleteFile = async (auth, fileId) => {
-  const driveService = google.drive({ version: 'v3', auth });
-
-  let response = await driveService.files.delete({
-    fileId: fileId,
-  });
-};
 
 module.exports = {
   lerUsuario: async (req, res, next) => {
@@ -268,7 +208,12 @@ module.exports = {
     try {
       const { userId, nome } = req.body;
 
-      const id = await createAndUploadFile(auth, `public/images/fornecedores/${nome}`, nome);
+      const id = await googleDrive.createAndUploadFile(
+        googleDrive.auth,
+        `public/images/fornecedores/${nome}`,
+        nome,
+        process.env.GOOGLEDRIVE_FORNE_FOLDER
+      );
 
       if (!id) {
         res.status(500).json({ error: 'Erro enviando arquivo.' });
@@ -292,7 +237,6 @@ module.exports = {
       );
       res.status(200).json({ message: 'Arquivo enviado.', id });
     } catch (err) {
-      console.log(err);
       res.status(500).json({ error: 'Erro enviando arquivo.' });
     }
   },
@@ -301,7 +245,7 @@ module.exports = {
     try {
       const { logoId, userId } = req.body;
 
-      await deleteFile(auth, logoId);
+      await googleDrive.deleteFile(googleDrive.auth, logoId);
 
       await Fornecedor.update(
         { logo: null },
@@ -316,7 +260,6 @@ module.exports = {
 
       res.status(200).json({ message: 'Arquivo excluido.' });
     } catch (err) {
-      console.log(err);
       res.status(500).json({ error: 'Erro excluindo arquivo.' });
     }
   },

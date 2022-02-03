@@ -11,10 +11,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      tipo: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
       descricaoProduto: {
         type: Sequelize.STRING,
         allowNull: false,

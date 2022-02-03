@@ -7,7 +7,22 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
       },
-      nome: DataTypes.STRING,
+      nome: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      nomeResponsavelObra: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      telefoneResponsavelObra: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      emailResponsavelObra: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       profissional_userId: {
         type: DataTypes.STRING,
         references: {

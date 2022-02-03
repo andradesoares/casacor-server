@@ -11,6 +11,18 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      nomeResponsavelObra: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      telefoneResponsavelObra: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      emailResponsavelObra: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       profissional_userId: {
         type: Sequelize.STRING,
         references: {

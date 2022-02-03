@@ -6,21 +6,20 @@ const path = require('path');
 const fs = require('fs');
 const { google } = require('googleapis');
 const sendEmail = require('../helpers/sendEmail');
-const { Fornecedor, Profissional, TokenPassword, Admin, Ambiente } = require('../models');
+const {
+  Fornecedor,
+  Profissional,
+  TokenPassword,
+  Admin,
+  Ambiente,
+  Sustentabilidade,
+} = require('../models');
 
 module.exports = {
   fornecedorSignUp: async (req, res, next) => {
     try {
-      const {
-        nome,
-        tipo,
-        descricaoProduto,
-        telefone,
-        email,
-        siteEmpresa,
-        perfilInstagram,
-        password,
-      } = req.value.body;
+      const { nome, descricaoProduto, telefone, email, siteEmpresa, perfilInstagram, password } =
+        req.value.body;
 
       const usuarioExistente = await Fornecedor.findOne({
         where: {
@@ -39,7 +38,6 @@ module.exports = {
         fornecedor_userId: userId,
         nome: nome,
         status: 'pendente',
-        tipo: tipo,
         email: email,
         descricaoProduto: descricaoProduto,
         telefone: telefone,
@@ -60,19 +58,8 @@ module.exports = {
   },
   profissionalSignUp: async (req, res, next) => {
     try {
-      const {
-        nome,
-        tipo,
-        nomeEscritorio,
-        dataDeNascimento,
-        cpf,
-        email,
-        endereco,
-        nomeResponsavelObra,
-        telefoneResponsavelObra,
-        emailResponsavelObra,
-        password,
-      } = req.value.body;
+      const { nome, nomeEscritorio, dataDeNascimento, cpf, email, endereco, password } =
+        req.value.body;
 
       const usuarioExistente = await Profissional.findOne({
         where: {
@@ -90,16 +77,12 @@ module.exports = {
       await Profissional.create({
         profissional_userId: userId,
         nome: nome,
-        tipo: tipo,
         status: 'pendente',
         nomeEscritorio: nomeEscritorio,
         datadeNascimento: dataDeNascimento,
         cpf: cpf,
         email: email,
         endereco: endereco,
-        nomeResponsavelObra: nomeResponsavelObra,
-        telefoneResponsavelObra: telefoneResponsavelObra,
-        emailResponsavelObra: emailResponsavelObra,
         password: hashPassword,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -110,6 +93,17 @@ module.exports = {
       await Ambiente.create({
         id: ambienteId,
         profissional_userId: userId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      const sustentabilidadeId = crypto.randomBytes(32).toString('hex');
+
+      await Sustentabilidade.create({
+        id: sustentabilidadeId,
+        ambiente_id: ambienteId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
 
       res.status(200).json({
@@ -183,7 +177,6 @@ module.exports = {
 
       res.status(200).json({ message: 'Usuario cadastrado.', userId });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ error: 'Erro ao cadastrar usuario' });
     }
   },
@@ -327,28 +320,27 @@ module.exports = {
   },
   profissionalUpdate: async (req, res, next) => {
     try {
-      const { userId, nome, descricaoProduto, telefone, siteEmpresa, perfilInstagram } =
-        req.value.body;
+      const { userId, nome, nomeEscritorio, dataDeNascimento, cpf, endereco } = req.value.body;
 
-      const fornecedor = await Fornecedor.findOne({
+      const profissional = await Profissional.findOne({
         where: {
-          fornecedor_userId: userId,
+          profissional_userId: userId,
         },
       });
 
-      if (!fornecedor) {
+      if (!profissional) {
         return res.status(400).json({ error: 'Usuario não encontrado' });
       }
 
-      await fornecedor.set({
+      await profissional.set({
         nome: nome,
-        descricaoProduto: descricaoProduto,
-        telefone: telefone,
-        siteEmpresa: siteEmpresa,
-        perfilInstagram: perfilInstagram,
+        nomeEscritorio: nomeEscritorio,
+        datadeNascimento: dataDeNascimento,
+        cpf: cpf,
+        endereco: endereco,
       });
 
-      res.status(200).json({ message: 'Usuario atualizado', usuario: fornecedor });
+      res.status(200).json({ message: 'Usuario atualizado', usuario: profissional });
     } catch (err) {
       console.log(err);
       res.status(500).json({ error: 'Error atualizando usuario.' });

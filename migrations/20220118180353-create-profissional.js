@@ -11,10 +11,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      tipo: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
       nomeEscritorio: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -35,18 +31,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      nomeResponsavelObra: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      telefoneResponsavelObra: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      emailResponsavelObra: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
       password: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -54,6 +38,10 @@ module.exports = {
       status: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      logo: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,

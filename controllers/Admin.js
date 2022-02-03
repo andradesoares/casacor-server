@@ -93,8 +93,6 @@ module.exports = {
         });
       }
 
-      console.log(tipoUsuario);
-
       let admin = await Admin.findOne({
         where: {
           admin_userId: admin_userId,

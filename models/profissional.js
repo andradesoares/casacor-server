@@ -11,10 +11,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      tipo: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       nomeEscritorio: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -35,18 +31,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      nomeResponsavelObra: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      telefoneResponsavelObra: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      emailResponsavelObra: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -54,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      logo: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE,

@@ -1,5 +1,7 @@
 const crypto = require('crypto');
 const { Op } = require('sequelize');
+const fs = require('fs');
+const googleDrive = require('../helpers/googleDrive');
 
 const {
   Fornecedor,
@@ -31,6 +33,7 @@ module.exports = {
       });
       res.status(200).send({ usuario });
     } catch (error) {
+      console.log(error);
       res.status(500).send({ error: 'Erro ao encontrar usuarios' });
     }
   },
@@ -256,6 +259,66 @@ module.exports = {
       }
     } catch (error) {
       res.status(500).send({ error: 'Erro ao cancelar conexao' });
+    }
+  },
+  fileUpload: async (req, res, next) => {
+    try {
+      const { userId, nome } = req.body;
+
+      const id = await googleDrive.createAndUploadFile(
+        googleDrive.auth,
+        `public/images/profissionais/${nome}`,
+        nome,
+        process.env.GOOGLEDRIVE_PROFI_FOLDER
+      );
+
+      if (!id) {
+        res.status(500).json({ error: 'Erro enviando arquivo.' });
+      }
+
+      await Profissional.update(
+        { logo: id },
+        {
+          where: {
+            profissional_userId: userId,
+          },
+        }
+      );
+
+      fs.rename(
+        __dirname + `/../public/images/profissionais/${nome}`,
+        __dirname + `/../public/images/profissionais/${id}.jpg`,
+        () => {
+          console.log('\nFile Renamed!\n');
+        }
+      );
+      res.status(200).json({ message: 'Arquivo enviado.', id });
+    } catch (erro) {
+      console.log(erro);
+      res.status(500).json({ error: 'Erro enviando arquivo.' });
+    }
+  },
+
+  fileDelete: async (req, res, next) => {
+    try {
+      const { logoId, userId } = req.body;
+
+      await googleDrive.deleteFile(googleDrive.auth, logoId);
+
+      await Profissional.update(
+        { logo: null },
+        {
+          where: {
+            profissional_userId: userId,
+          },
+        }
+      );
+
+      fs.unlinkSync(__dirname + `/../public/images/profissionais/${logoId}.jpg`);
+
+      res.status(200).json({ message: 'Arquivo excluido.' });
+    } catch (err) {
+      res.status(500).json({ error: 'Erro excluindo arquivo.' });
     }
   },
 };
