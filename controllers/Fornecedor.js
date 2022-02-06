@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const fs = require('fs');
 const googleDrive = require('../helpers/googleDrive');
 
-const { Fornecedor, Profissional, FornecedorProfissional } = require('../models');
+const { Fornecedor, Profissional, FornecedorProfissional, Mensagem } = require('../models');
 
 module.exports = {
   lerUsuario: async (req, res, next) => {
@@ -17,8 +17,14 @@ module.exports = {
         },
       });
 
+      const mensagens = await Mensagem.findAll({
+        where: {
+          [Op.or]: [{ destinatario: 'todos' }, { destinatario: 'fornecedores' }],
+        },
+      });
+
       // const response = await downloadFile(usuario.logo, auth);
-      res.status(200).send({ usuario });
+      res.status(200).send({ usuario, mensagens });
     } catch (error) {
       res.status(500).send({ error: 'Erro ao encontrar usuario' });
     }
@@ -135,29 +141,29 @@ module.exports = {
       });
 
       if (conexao) {
+        usuarioProfissional.dataValues.Fornecedors = [
+          {
+            usuarioFornecedor,
+            FornecedorProfissional: conexao.dataValues,
+          },
+        ];
         if (conexao.dataValues.iniciadoPor == 'profissional') {
           if (resposta == 'confirmado') {
             conexao.status = 'confirmado';
             conexao.save();
           } else {
             conexao.destroy();
-            return res.status(400).send({ error: 'Conexao terminada' });
+            return res
+              .status(200)
+              .send({ message: 'Conexao terminada', profissional: usuarioProfissional });
           }
         } else {
           return res.status(400).send({ error: 'Conexao já existente' });
         }
+        res
+          .status(200)
+          .send({ message: 'Profissional adicionado', profissional: usuarioProfissional });
       }
-
-      usuarioProfissional.dataValues.Fornecedors = [
-        {
-          usuarioFornecedor,
-          FornecedorProfissional: conexao.dataValues,
-        },
-      ];
-
-      res
-        .status(200)
-        .send({ message: 'Profissional adicionado', profissional: usuarioProfissional });
     } catch (error) {
       res.status(500).send({ error: 'Erro ao adicionar usuario' });
     }

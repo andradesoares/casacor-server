@@ -9,6 +9,7 @@ const {
   FornecedorProfissional,
   Ambiente,
   Sustentabilidade,
+  Mensagem,
 } = require('../models');
 
 module.exports = {
@@ -31,7 +32,14 @@ module.exports = {
           },
         },
       });
-      res.status(200).send({ usuario });
+
+      const mensagens = await Mensagem.findAll({
+        where: {
+          [Op.or]: [{ destinatario: 'todos' }, { destinatario: 'profissionais' }],
+        },
+      });
+
+      res.status(200).send({ usuario, mensagens });
     } catch (error) {
       console.log(error);
       res.status(500).send({ error: 'Erro ao encontrar usuarios' });
@@ -195,27 +203,27 @@ module.exports = {
       });
 
       if (conexao) {
+        usuarioFornecedor.dataValues.Profissionals = [
+          {
+            usuarioProfissional,
+            FornecedorProfissional: conexao.dataValues,
+          },
+        ];
         if (conexao.dataValues.iniciadoPor == 'fornecedor') {
           if (resposta == 'confirmado') {
             conexao.status = 'confirmado';
             conexao.save();
           } else {
             conexao.destroy();
-            return res.status(400).send({ error: 'Conexao terminada' });
+            return res
+              .status(200)
+              .send({ message: 'Conexao terminada', fornecedor: usuarioFornecedor });
           }
         } else {
           return res.status(400).send({ error: 'Conexao já existente' });
         }
+        res.status(200).send({ message: 'Profissional adicionado', fornecedor: usuarioFornecedor });
       }
-
-      usuarioFornecedor.dataValues.Profissionals = [
-        {
-          usuarioProfissional,
-          FornecedorProfissional: conexao.dataValues,
-        },
-      ];
-
-      res.status(200).send({ message: 'Profissional adicionado', fornecedor: usuarioFornecedor });
     } catch (error) {
       res.status(500).send({ error: 'Erro ao adicionar usuario' });
     }

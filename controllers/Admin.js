@@ -1,6 +1,14 @@
 const { Op } = require('sequelize');
+const crypto = require('crypto');
 
-const { Fornecedor, Profissional, Admin, Ambiente, Sustentabilidade } = require('../models');
+const {
+  Fornecedor,
+  Profissional,
+  Admin,
+  Ambiente,
+  Sustentabilidade,
+  Mensagem,
+} = require('../models');
 
 module.exports = {
   getOne: async (req, res, next) => {
@@ -64,7 +72,8 @@ module.exports = {
           },
         },
       });
-      res.status(200).send({ fornecedores, profissionais });
+      let mensagens = await Mensagem.findAll({ order: [['createdAt', 'DESC']] });
+      res.status(200).send({ fornecedores, profissionais, mensagens });
     } catch (error) {
       console.log(error);
       res.status(500).send({ error: 'Erro ao encontrar usuarios' });
@@ -72,8 +81,6 @@ module.exports = {
   },
   respostaCadastro: async (req, res, next) => {
     const { admin_userId, tipoUsuario, status, userId } = req.body;
-
-    console.log(userId);
 
     try {
       let usuario;
@@ -123,6 +130,43 @@ module.exports = {
     } catch (error) {
       console.log(error);
       res.status(500).send({ erro: 'Erro ao encontrar usuarios' });
+    }
+  },
+  enviarMensagem: async (req, res, next) => {
+    try {
+      const { userId, destinatario, mensagem, titulo } = req.value.body;
+
+      let admin = await Admin.findOne({
+        where: {
+          admin_userId: userId,
+        },
+      });
+
+      if (admin.tipo !== 'pleno') {
+        res.status(401).send({ error: 'Usuario sem autorização' });
+      }
+
+      const id = crypto.randomBytes(32).toString('hex');
+
+      await Mensagem.create({
+        id: id,
+        destinatario: destinatario,
+        mensagem: mensagem,
+        titulo: titulo,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      const mensagemEnviada = await Mensagem.findOne({
+        where: {
+          id: id,
+        },
+      });
+
+      res.status(200).send({ message: 'Mensagem enviada', mensagem: mensagemEnviada });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ erro: 'Erro ao enviar mensagem' });
     }
   },
 };

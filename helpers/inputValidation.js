@@ -97,5 +97,11 @@ module.exports = {
       profissionalId: joi.string().required(),
       fornecedorId: joi.string().required(),
     }),
+    mensagemSchema: joi.object().keys({
+      userId: joi.string().required(),
+      destinatario: joi.string().required(),
+      mensagem: joi.string().required(),
+      titulo: joi.string().required(),
+    }),
   },
 };
