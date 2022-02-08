@@ -93,10 +93,6 @@ module.exports = {
       userId: joi.string().required(),
       resetToken: joi.string().required(),
     }),
-    addProfissional: joi.object().keys({
-      profissionalId: joi.string().required(),
-      fornecedorId: joi.string().required(),
-    }),
     mensagemSchema: joi.object().keys({
       userId: joi.string().required(),
       destinatario: joi.string().required(),

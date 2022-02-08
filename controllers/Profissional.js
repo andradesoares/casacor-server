@@ -125,19 +125,19 @@ module.exports = {
     }
   },
   adicionarFornecedor: async (req, res, next) => {
-    const { profissionalId, fornecedorId } = req.value.body;
+    const { usuarioId, usuarioOpostoId } = req.body;
 
     try {
       const usuarioProfissional = await Profissional.findOne({
         where: {
-          profissional_userId: profissionalId,
+          profissional_userId: usuarioId,
         },
         attributes: ['profissional_userId', 'nome'],
       });
 
       const usuarioFornecedor = await Fornecedor.findOne({
         where: {
-          fornecedor_userId: fornecedorId,
+          fornecedor_userId: usuarioOpostoId,
         },
         attributes: ['fornecedor_userId', 'nome'],
       });
@@ -149,8 +149,8 @@ module.exports = {
 
       await FornecedorProfissional.create({
         relacaoId: id,
-        fornecedor_userId: fornecedorId,
-        profissional_userId: profissionalId,
+        fornecedor_userId: usuarioOpostoId,
+        profissional_userId: usuarioId,
         status: 'pendente',
         iniciadoPor: 'profissional',
       });
@@ -160,8 +160,8 @@ module.exports = {
           usuarioProfissional,
           FornecedorProfissional: {
             relacaoId: id,
-            fornecedor_userId: fornecedorId,
-            profissional_userId: profissionalId,
+            fornecedor_userId: usuarioOpostoId,
+            profissional_userId: usuarioId,
             status: 'pendente',
             iniciadoPor: 'profissional',
           },
@@ -174,19 +174,19 @@ module.exports = {
     }
   },
   responderSolicitacaoFornecedor: async (req, res, next) => {
-    const { profissionalId, fornecedorId, resposta } = req.body;
+    const { usuarioId, usuarioOpostoId, resposta } = req.body;
 
     try {
       const usuarioProfissional = await Profissional.findOne({
         where: {
-          profissional_userId: profissionalId,
+          profissional_userId: usuarioId,
         },
         attributes: ['profissional_userId', 'nome'],
       });
 
       const usuarioFornecedor = await Fornecedor.findOne({
         where: {
-          fornecedor_userId: fornecedorId,
+          fornecedor_userId: usuarioOpostoId,
         },
         attributes: ['fornecedor_userId', 'nome'],
       });
@@ -197,8 +197,8 @@ module.exports = {
 
       const conexao = await FornecedorProfissional.findOne({
         where: {
-          fornecedor_userId: fornecedorId,
-          profissional_userId: profissionalId,
+          fornecedor_userId: usuarioOpostoId,
+          profissional_userId: usuarioId,
         },
       });
 
@@ -275,7 +275,7 @@ module.exports = {
 
       const id = await googleDrive.createAndUploadFile(
         googleDrive.auth,
-        `public/images/profissionais/${nome}`,
+        `public/images/profissional/${nome}`,
         nome,
         process.env.GOOGLEDRIVE_PROFI_FOLDER
       );
@@ -294,8 +294,8 @@ module.exports = {
       );
 
       fs.rename(
-        __dirname + `/../public/images/profissionais/${nome}`,
-        __dirname + `/../public/images/profissionais/${id}.jpg`,
+        __dirname + `/../public/images/profissional/${nome}`,
+        __dirname + `/../public/images/profissional/${id}.jpg`,
         () => {
           console.log('\nFile Renamed!\n');
         }
@@ -322,7 +322,7 @@ module.exports = {
         }
       );
 
-      fs.unlinkSync(__dirname + `/../public/images/profissionais/${logoId}.jpg`);
+      fs.unlinkSync(__dirname + `/../public/images/profissional/${logoId}.jpg`);
 
       res.status(200).json({ message: 'Arquivo excluido.' });
     } catch (err) {

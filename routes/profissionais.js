@@ -4,7 +4,7 @@ const path = require('path');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join('public/images/profissionais'));
+    cb(null, path.join('public/images/profissional'));
   },
   filename: function (req, file, cb) {
     cb(null, req.body.nome);
@@ -22,11 +22,7 @@ const Router = express.Router();
 
 Router.route('/lerUsuario').post(ProfissionaisController.lerUsuario);
 Router.route('/lerConexoes').get(ProfissionaisController.lerConexoes);
-Router.route('/adicionarFornecedor').post(
-  requireAuth,
-  validadeBody(schemas.addProfissional),
-  ProfissionaisController.adicionarFornecedor
-);
+Router.route('/adicionarfornecedor').post(requireAuth, ProfissionaisController.adicionarFornecedor);
 Router.route('/confirmarConexao').post(
   requireAuth,
   ProfissionaisController.responderSolicitacaoFornecedor
