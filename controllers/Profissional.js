@@ -229,19 +229,19 @@ module.exports = {
     }
   },
   cancelarConexaoIniciadaProfissional: async (req, res, next) => {
-    const { profissionalId, fornecedorId } = req.body;
+    const { usuarioId, usuarioOpostoId } = req.body;
 
     try {
       const usuarioProfissional = await Profissional.findOne({
         where: {
-          profissional_userId: profissionalId,
+          profissional_userId: usuarioId,
         },
         attributes: ['profissional_userId', 'nome'],
       });
 
       const usuarioFornecedor = await Fornecedor.findOne({
         where: {
-          fornecedor_userId: fornecedorId,
+          fornecedor_userId: usuarioOpostoId,
         },
         attributes: ['fornecedor_userId', 'nome'],
       });
@@ -252,8 +252,8 @@ module.exports = {
 
       const conexao = await FornecedorProfissional.findOne({
         where: {
-          fornecedor_userId: fornecedorId,
-          profissional_userId: profissionalId,
+          fornecedor_userId: usuarioOpostoId,
+          profissional_userId: usuarioId,
         },
       });
 
@@ -266,6 +266,7 @@ module.exports = {
         return res.status(400).send({ error: 'Conexao não existente' });
       }
     } catch (error) {
+      console.log(error);
       res.status(500).send({ error: 'Erro ao cancelar conexao' });
     }
   },
