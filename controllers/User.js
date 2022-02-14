@@ -242,13 +242,13 @@ module.exports = {
       const passwordResetToken = await TokenPassword.findOne({ where: { userId: userId } });
 
       if (!passwordResetToken) {
-        return res.json({ error: 'Token invalido' });
+        return res.status(500).json({ error: 'Token invalido' });
       }
 
       const isValid = await bcrypt.compare(resetToken, passwordResetToken.token);
 
       if (!isValid) {
-        return res.json({ error: 'Token invalido' });
+        return res.status(500).json({ error: 'Token invalido' });
       }
 
       const hashPassword = bcrypt.hashSync(password, 10);
@@ -284,9 +284,9 @@ module.exports = {
 
       await passwordResetToken.destroy();
 
-      res.status(200).json({ message: 'Senha trocada' });
-    } catch (err) {
-      res.status(500).json({ error: 'Erro ao trocar senha' });
+      res.status(200).send({ message: 'Senha trocada' });
+    } catch (error) {
+      res.status(500).send({ error: 'Erro ao trocar senha' });
     }
   },
   fornecedorUpdate: async (req, res, next) => {
@@ -301,7 +301,7 @@ module.exports = {
       });
 
       if (!fornecedor) {
-        return res.status(400).json({ error: 'Usuario não encontrado' });
+        return res.status(400).send({ error: 'Usuario não encontrado' });
       }
 
       await fornecedor.set({
@@ -312,10 +312,9 @@ module.exports = {
         perfilInstagram: perfilInstagram,
       });
 
-      res.status(200).json({ message: 'Usuario atualizado.', usuario: fornecedor });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ error: 'Erro atualizando usuario.' });
+      res.status(200).send({ message: 'Usuario atualizado.', usuario: fornecedor });
+    } catch (error) {
+      res.status(500).send({ error: 'Erro atualizando usuario.' });
     }
   },
   profissionalUpdate: async (req, res, next) => {
@@ -329,7 +328,7 @@ module.exports = {
       });
 
       if (!profissional) {
-        return res.status(400).json({ error: 'Usuario não encontrado' });
+        return res.status(400).send({ error: 'Usuario não encontrado' });
       }
 
       await profissional.set({
@@ -340,10 +339,9 @@ module.exports = {
         endereco: endereco,
       });
 
-      res.status(200).json({ message: 'Usuario atualizado', usuario: profissional });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ error: 'Error atualizando usuario.' });
+      res.status(200).send({ message: 'Usuario atualizado', usuario: profissional });
+    } catch (error) {
+      res.status(500).send({ error: 'Error atualizando usuario.' });
     }
   },
 };
