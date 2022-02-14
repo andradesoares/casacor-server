@@ -95,14 +95,14 @@ module.exports = {
     }
   },
   lerConexoes: async (req, res, next) => {
-    const { profissionalId } = req.query;
+    const { userId } = req.query;
 
     try {
       const fornecedores = await Fornecedor.findAll({
         joinTableAttributes: ['status'],
         include: {
           model: Profissional,
-          where: { profissional_userId: profissionalId },
+          where: { profissional_userId: userId },
           required: false,
           attributes: ['profissional_userId', 'nome'],
         },
@@ -111,15 +111,15 @@ module.exports = {
         where: { status: 'confirmado' },
       });
 
-      const fornecedoresAdicionados = fornecedores.filter(
-        (fornecedor) => fornecedor.Profissionals[0]?.profissional_userId == profissionalId
+      const adicionados = fornecedores.filter(
+        (fornecedor) => fornecedor.Profissionals[0]?.profissional_userId == userId
       );
 
-      const fornecedoresNaoAdicionados = fornecedores.filter(
-        (fornecedor) => fornecedor.Profissionals[0]?.profissional_userId !== profissionalId
+      const naoAdicionados = fornecedores.filter(
+        (fornecedor) => fornecedor.Profissionals[0]?.profissional_userId !== userId
       );
 
-      res.status(200).send({ fornecedoresAdicionados, fornecedoresNaoAdicionados });
+      res.status(200).send({ adicionados, naoAdicionados });
     } catch (error) {
       res.status(500).send({ error: 'Erro ao encontrar usuarios' });
     }
@@ -168,8 +168,11 @@ module.exports = {
         },
       ];
 
-      res.status(200).send({ message: 'Fornecedor adicionado', fornecedor: usuarioFornecedor });
+      res
+        .status(200)
+        .send({ message: 'Fornecedor adicionado', usuarioOpostoData: usuarioFornecedor });
     } catch (error) {
+      console.log(error);
       res.status(500).send({ error: 'Erro ao adicionar usuario' });
     }
   },
@@ -217,12 +220,14 @@ module.exports = {
             conexao.destroy();
             return res
               .status(200)
-              .send({ message: 'Conexao terminada', fornecedor: usuarioFornecedor });
+              .send({ message: 'Conexao terminada', usuarioOpostoData: usuarioFornecedor });
           }
         } else {
           return res.status(400).send({ error: 'Conexao já existente' });
         }
-        res.status(200).send({ message: 'Profissional adicionado', fornecedor: usuarioFornecedor });
+        res
+          .status(200)
+          .send({ message: 'Profissional adicionado', usuarioOpostoData: usuarioFornecedor });
       }
     } catch (error) {
       res.status(500).send({ error: 'Erro ao adicionar usuario' });
@@ -261,7 +266,9 @@ module.exports = {
         if (conexao.dataValues.iniciadoPor == 'profissional' && conexao.status == 'pendente') {
           conexao.destroy();
         }
-        res.status(200).send({ message: 'Conexao Cancelada', fornecedor: usuarioFornecedor });
+        res
+          .status(200)
+          .send({ message: 'Conexao Cancelada', usuarioOpostoData: usuarioFornecedor });
       } else {
         return res.status(400).send({ error: 'Conexao não existente' });
       }
