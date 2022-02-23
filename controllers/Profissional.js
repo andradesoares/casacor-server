@@ -14,18 +14,18 @@ const {
 
 module.exports = {
   lerUsuario: async (req, res, next) => {
-    const { profissionalId } = req.body;
+    const { userId } = req.body;
 
     try {
       const usuario = await Profissional.findOne({
         attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
         where: {
-          profissional_userId: profissionalId,
+          profissional_userId: userId,
         },
         include: {
           model: Ambiente,
           where: {
-            profissional_userId: profissionalId,
+            profissional_userId: userId,
           },
           include: {
             model: Sustentabilidade,

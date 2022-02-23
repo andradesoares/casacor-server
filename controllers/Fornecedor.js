@@ -7,13 +7,13 @@ const { Fornecedor, Profissional, FornecedorProfissional, Mensagem } = require('
 
 module.exports = {
   lerUsuario: async (req, res, next) => {
-    const { fornecedorId } = req.body;
+    const { userId } = req.body;
 
     try {
       const usuario = await Fornecedor.findOne({
         attributes: { exclude: ['passord', 'createdAt', 'updatedAt'] },
         where: {
-          fornecedor_userId: fornecedorId,
+          fornecedor_userId: userId,
         },
       });
 
