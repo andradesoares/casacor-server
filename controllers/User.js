@@ -294,7 +294,8 @@ module.exports = {
       const { userId, nome, descricaoProduto, telefone, siteEmpresa, perfilInstagram } =
         req.value.body;
 
-      const fornecedor = await Fornecedor.findOne({
+      const fornecedor = await await Fornecedor.findOne({
+        attributes: { exclude: ['passord', 'createdAt', 'updatedAt'] },
         where: {
           fornecedor_userId: userId,
         },
@@ -322,8 +323,18 @@ module.exports = {
       const { userId, nome, nomeEscritorio, dataDeNascimento, cpf, endereco } = req.value.body;
 
       const profissional = await Profissional.findOne({
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
         where: {
           profissional_userId: userId,
+        },
+        include: {
+          model: Ambiente,
+          where: {
+            profissional_userId: userId,
+          },
+          include: {
+            model: Sustentabilidade,
+          },
         },
       });
 
